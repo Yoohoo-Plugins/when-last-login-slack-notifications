@@ -28,6 +28,32 @@
 		</select>
 	</td>
 </tr>
+
+
+<?php 
+	if ( isset( $wll_sn_settings['new_user_notification'] ) ) {
+		$checked_new_user = $wll_sn_settings['new_user_notification'];
+	} else {
+		$checked_new_user = '';
+	}
+?>
+<tr>
+	<th><?php _e( 'Send a notification everytime a new user registers', 'when-last-login-slack-notifications' ); ?></th>
+	<td><input type="checkbox" name="wll_sn_new_user_notification" value="1" <?php checked( $checked_new_user, 1 ); ?>/></td>
+</tr>
+
+<?php
+	if ( isset( $wll_sn_settings['show_ip'] ) ) {
+		$checked_ip = $wll_sn_settings['show_ip'];
+	} else {
+		$checked_ip = '';
+	}
+?>
+
+<tr>
+	<th><?php _e( "Include user's IP address in Slack notifications", 'when-last-login-slack-notifications' ); ?></th>
+	<td><input type="checkbox" name="wll_sn_include_IP" value="1" <?php checked( $checked_ip, 1 ); ?>/></td>
+</tr>
 <?php $time_array = WhenLastLoginSlackNotifications::wll_sn_time_array(); ?>
 <tr>
 	<th><?php _e('Only notify during a specific time frame', 'when-last-login-slack-notifications'); ?></th>

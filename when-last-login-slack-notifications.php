@@ -122,6 +122,14 @@ class WhenLastLoginSlackNotifications{
 					$wll_site_url = get_option( 'siteurl' );
 
 					$text = sprintf( __('%s has logged in to %s at %s', 'when-last-login-slack-notifications' ), $user_display_name, $wll_site_url, date( 'Y-m-d H:i:s', $wll_current_time ) );
+
+					if ( 1 === $settings['show_ip'] ) {
+						$text .= " " . __( 'from', 'when-last-login-slack-notifications' ) . " ";
+						$text .= When_Last_Login::wll_get_user_ip_address();
+					}
+
+					$text = apply_filters( 'wll_slack_text_filter', $text );
+					
 					$payload = array(
 			            'text'        	=> $text,
 			            'username'		=> __( 'When Last Login - Slack Notification', 'when-last-login-slack-notifications' )
@@ -167,20 +175,22 @@ class WhenLastLoginSlackNotifications{
 			if( isset( $_POST['wll_sn_webhook_url'] ) ){
 
 				$wll_sn_settings = array( 
-					'webhook' => sanitize_text_field( $_POST['wll_sn_webhook_url'] ),
-					'user_role' => sanitize_text_field( $_POST['wll_sn_notify_specific_user_role'] ),
-					'timeslot' => sanitize_text_field( $_POST['wll_sn_notify_timeslot'] ),
-					'start_time_h' => (int) $_POST['wll_sn_notify_start_time_hours'],
-					'start_time_m' => (int) $_POST['wll_sn_notify_start_time_minutes'],
-					'end_time_h' => (int) $_POST['wll_sn_notify_end_time_hours'],
-					'end_time_m' => (int) $_POST['wll_sn_notify_end_time_minutes']
+					'webhook' => isset( $_POST['wll_sn_webhook_url'] ) ? sanitize_text_field( $_POST['wll_sn_webhook_url'] ) : "",
+					'user_role' => isset( $_POST['wll_sn_notify_specific_user_role'] ) ? sanitize_text_field( $_POST['wll_sn_notify_specific_user_role'] ) : "",
+					'new_user_notification' => isset( $_POST['wll_sn_new_user_notification'] ) ? (int) $_POST['wll_sn_new_user_notification'] : "",
+					'show_ip' => isset( $_POST['wll_sn_include_IP'] ) ? (int) $_POST['wll_sn_include_IP'] : "",
+					'timeslot' => isset( $_POST['wll_sn_notify_timeslot'] ) ? sanitize_text_field( $_POST['wll_sn_notify_timeslot'] ) : "",
+					'start_time_h' => isset( $_POST['wll_sn_notify_start_time_hours'] ) ? (int) $_POST['wll_sn_notify_start_time_hours'] : "",
+					'start_time_m' => isset( $_POST['wll_sn_notify_start_time_minutes'] ) ? (int) $_POST['wll_sn_notify_start_time_minutes'] : "",
+					'end_time_h' => isset( $_POST['wll_sn_notify_end_time_hours'] ) ? (int) $_POST['wll_sn_notify_end_time_hours'] : "",
+					'end_time_m' => isset( $_POST['wll_sn_notify_end_time_minutes'] ) ? (int) $_POST['wll_sn_notify_end_time_minutes'] : ""
 				);
 
 				$updated = update_option( 'wll_sn_settings', $wll_sn_settings );
 
 				if( $updated ){
 
-					echo "<div class='updated'><p>".__('Settings successfully updated', 'when-last-login-slack-notifications')."</p></div>";
+					echo "<div class='notice notice-success is-dismissible'><p>".__('Settings successfully updated', 'when-last-login-slack-notifications')."</p></div>";
 				}
 
 			}
