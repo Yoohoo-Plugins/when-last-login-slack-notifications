@@ -1,5 +1,7 @@
 jQuery(document).ready(function(){
 
+	jQuery( '.nav-tab:nth-child(1)').removeClass('nav-tab-active');
+
 	jQuery("#wll_sn_notify_timeslot").on("change", function(){
 
 		var timeslot_val = jQuery(this).val();

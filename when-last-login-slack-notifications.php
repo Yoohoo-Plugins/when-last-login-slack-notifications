@@ -3,8 +3,8 @@
  * Plugin Name: When Last Login - Slack Notifications
  * Plugin URI: https://yoohooplugins.com/plugins/when-last-login-slack-notifications
  * Description: Adds functionality to WordPress to show when a user last logged in. Sends a notification via Slack when this is done.
- * Version: 1.0.0
- * Author: YooHoo Plugins
+ * Version: 1.1
+ * Author: Yoohoo Plugins
  * Author URI: https://www.whenlastlogin.com
  * Text Domain: when-last-login-slack-notifications
  */
@@ -15,6 +15,7 @@ class WhenLastLoginSlackNotifications{
 
 		add_action( 'wll_logged_in_action', array( $this, 'wll_sn_logged_in' ), 10, 1 );
 		add_action( 'admin_head', array( $this, 'wll_sn_admin_head' ) );
+		add_action( 'admin_menu', array ( $this, 'wll_sn_settings_submenu') );
 
 		add_filter( 'wll_settings_page_tabs', array( $this, 'wll_sn_settings_tab' ) );
 		add_filter( 'wll_settings_page_content', array( $this, 'wll_sn_settings_content' ) );
@@ -24,9 +25,8 @@ class WhenLastLoginSlackNotifications{
 
 	public function wll_sn_admin_scripts(){
 
-		if( isset( $_GET['page'] ) && $_GET['page'] == 'when-last-login-settings' ){
+		if ( ( isset( $_GET['page'] ) && $_GET['page'] == 'when-last-login-settings' ) && ( isset( $_GET['tab'] ) && $_GET['tab'] == 'slack-notifications' ) ){
 
-			wp_enqueue_script( 'jquery' );
 			wp_enqueue_script( 'wll-sn-admin-script', plugins_url( '/js/admin.js', __FILE__ ), array( 'jquery' ) );
 
 		}
@@ -139,10 +139,14 @@ class WhenLastLoginSlackNotifications{
 
 	}
 
+	public function wll_sn_settings_submenu() {
+		add_submenu_page( 'when-last-login-settings', __( 'Slack Notifications', 'when-last-login-slack-notifications' ), __( 'Slack Notifications', 'when-last-login-slack-notifications' ), 'manage_options', '?page=when-last-login-settings&tab=slack-notifications' );
+	}
+
 	public function wll_sn_settings_tab( $array ){
 
 		$array['slack-notifications'] = array(
-			'title' => __('Slack Notifications', 'when-last-login-slack-notifications'),
+			'title' => __( 'Slack Notifications', 'when-last-login-slack-notifications' ),
 			'icon' => ''
 		);
 

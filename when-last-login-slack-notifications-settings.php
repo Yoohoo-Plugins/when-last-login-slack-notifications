@@ -4,10 +4,10 @@
 	<th><?php _e('Slack Webhook URL', 'when-last-login-slack-notifications'); ?></th>
 	<td><input type='text' name='wll_sn_webhook_url' style='width: 250px;' value='<?php echo isset( $wll_sn_settings['webhook'] ) ? $wll_sn_settings['webhook'] : ""; ?>' />
 	<small class='description'>
-		<p>Go to <a href='https://my.slack.com/services/new/incoming-webhook' target='_BLANK'>https://my.slack.com/services/new/incoming-webhook</a></p>
-		<p>Create a new webhook. </p>
-		<p>Set a channel to receive the notifications </p>
-		<p>Copy the URL for the webhook</p>
+		<p><?php _e( 'Go to', 'when-last-login-slack-notifications' ); ?> <a href='https://my.slack.com/services/new/incoming-webhook' target='_BLANK'>https://my.slack.com/services/new/incoming-webhook</a></p>
+		<p><?php _e( 'Create a new webhook.', 'when-last-login-slack-notifications' ); ?></p>
+		<p><?php _e( 'Set a channel to receive the notifications.', 'when-last-login-slack-notifications' ); ?> </p>
+		<p><?php _e( 'Copy the URL for the webhook', 'when-last-login-slack-notifications' ); ?></p>
 	</small>
 	</td>
 </tr>
