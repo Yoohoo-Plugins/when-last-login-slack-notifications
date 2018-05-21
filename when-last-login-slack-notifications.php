@@ -17,6 +17,8 @@ class WhenLastLoginSlackNotifications{
 		add_action( 'admin_head', array( $this, 'wll_sn_admin_head' ) );
 		add_action( 'admin_menu', array ( $this, 'wll_sn_settings_submenu') );
 
+		add_action( 'user_register', array( $this, 'wll_sn_new_user_notification' ) );
+
 		add_filter( 'wll_settings_page_tabs', array( $this, 'wll_sn_settings_tab' ) );
 		add_filter( 'wll_settings_page_content', array( $this, 'wll_sn_settings_content' ) );
 
@@ -124,11 +126,12 @@ class WhenLastLoginSlackNotifications{
 					$text = sprintf( __('%s has logged in to %s at %s', 'when-last-login-slack-notifications' ), $user_display_name, $wll_site_url, date( 'Y-m-d H:i:s', $wll_current_time ) );
 
 					if ( 1 === $settings['show_ip'] ) {
+						$ip =  When_Last_Login::wll_get_user_ip_address();
 						$text .= " " . __( 'from', 'when-last-login-slack-notifications' ) . " ";
-						$text .= When_Last_Login::wll_get_user_ip_address();
+						$text .= $ip;
 					}
 
-					$text = apply_filters( 'wll_slack_text_filter', $text );
+					$text = apply_filters( 'wll_slack_login_text_filter', $text );
 					
 					$payload = array(
 			            'text'        	=> $text,
@@ -138,13 +141,35 @@ class WhenLastLoginSlackNotifications{
 			        $output  = 'payload=' . json_encode( $payload );
 
 			        $response = wp_remote_post( $settings['webhook'], array( 'body' => $output ) );
-
-			    }
-		        
+			    }    
 		    }
-
 	    }
+	}
 
+	public function wll_sn_new_user_notification( $user_id ) {
+
+		$settings = get_option( 'wll_sn_settings' );
+
+		if ( 1 != $settings['new_user_notification'] ) {
+			return;
+		}
+
+		$wll_site_url = get_option( 'siteurl' );
+		$wll_current_time = current_time( 'timestamp' );
+		$user = get_user_by( 'ID', $user_id );
+
+		$text = sprintf( __( '%s has just registered on %s at %s', 'when-last-login-slack-notifications' ), $user->display_name, $wll_site_url, date( 'Y-m-d H:i:s', $wll_current_time ) );
+
+		$text = apply_filters( 'wll_slack_register_text_filter', $text, $user );
+
+		$payload = array(
+	        'text'        	=> $text,
+	        'username'		=> __( 'When Last Login - Slack Notification', 'when-last-login-slack-notifications' )
+	    );
+
+        $output  = 'payload=' . json_encode( $payload );
+
+        $response = wp_remote_post( $settings['webhook'], array( 'body' => $output ) );
 	}
 
 	public function wll_sn_settings_submenu() {
